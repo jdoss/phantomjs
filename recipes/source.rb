@@ -33,6 +33,14 @@ src_dir  = node['phantomjs']['src_dir']
 basename = node['phantomjs']['basename']
 checksum = node['phantomjs']['checksum']
 
+bash 'terrible_download_hack' do
+  cwd src_dir
+  code <<-EOH
+    wget -t 10 #{base_url}/#{basename}.tar.bz2
+  EOH
+  not_if { ::File.exists?("#{src_dir}/#{basename}.tar.bz2") }
+end
+
 remote_file "#{src_dir}/#{basename}.tar.bz2" do
   owner     'root'
   group     'root'
